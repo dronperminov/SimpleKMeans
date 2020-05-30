@@ -1,6 +1,7 @@
 const MANCHATTAN = "MANCHATTAN"
 const CHIBICHEV = "CHIBICHEV"
 const EUCLIDEAN = "EUCLIDEAN"
+const COSINE = "COSINE"
 
 function KMeans(canvas) {
     this.points = []
@@ -35,6 +36,14 @@ KMeans.prototype.Distance = function(p1, p2, type) {
 
     if (type == EUCLIDEAN)
         return Math.sqrt((p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y))
+
+    if (type == COSINE) {
+        let n = p1.x * p2.x + p1.y * p2.y
+        let n1 = p1.x * p1.x + p1.y * p1.y
+        let n2 = p2.x * p2.x + p2.y * p2.y
+
+        return 1 - n / Math.sqrt(n1 * n2)
+    }
 
     return 0;
 }
