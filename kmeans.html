@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>k-means</title>
+
+    <style>
+        #canvas { border: 1px solid #000; }
+
+        .kmeans .image, .kmeans .controls { display: inline-block; vertical-align: top; }
+        .kmeans .controls { margin-left: 10px }
+    </style>
+</head>
+<body>
+    <div class="kmeans">
+        <div class="image">
+            <canvas id="canvas" oncontextmenu="return false;"></canvas>
+        </div>
+
+        <div class="controls">
+            
+                <label>Метрика: <select id="distanceBox">
+                <option value="EUCLIDEAN" selected="">Евклидова</option>
+                <option value="MANCHATTAN">Манхэттена</option>
+                <option value="CHIBICHEV">Чебышева</option>
+            </select></label><br>
+            
+            <label><input type="checkbox" id="saveCentroids" />Сохранить центроиды</label><br>
+            <label><input type="checkbox" id="drawAreas" />Рисовать области</label><br>
+            <input type="submit" onclick="Clusterize()" value="Кластеризовать" />
+        </div>
+    </div>
+
+    <script src="kmeans.js"></script>
+    <script>
+        let width = Math.min(500, window.innerWidth / 2)
+
+        let canvas = document.getElementById("canvas")
+        let distanceBox = document.getElementById("distanceBox")
+        let saveCentroids = document.getElementById("saveCentroids")
+        let drawAreas = document.getElementById("drawAreas")
+
+        canvas.width = width
+        canvas.height = width
+
+        let kmeans = new KMeans(canvas) // создаём кластеризатор
+
+        document.addEventListener('mousedown', function(e) {
+            if (e.target.tagName != "CANVAS")
+                return;
+
+            // получаем координаты мыши
+            let x = e.offsetX
+            let y = e.offsetY
+
+            if (e.button == 0) {
+                kmeans.AddPoint(x, y) // добавляем точку по левой кнопке
+            }
+            else if (e.button == 2) {
+                kmeans.AddCentroid(x, y) // добавляем центроиду по правой кнопке
+            }
+            
+            kmeans.Draw() // отрисовываем точки
+        })
+
+        // кластеризация
+        function Clusterize() {
+            kmeans.Clusterize(distanceBox.value, saveCentroids.checked) // кластеризуем
+
+            if (drawAreas.checked) {
+                kmeans.Draw(distanceBox.value) // рисуем вместе с областями
+            }
+            else {
+                kmeans.Draw() // рисуем только точки
+            }
+        }
+
+    </script>
+</body>
+</html>
